@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="noindex">
+<title>Fumito Finance</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<style>
+  html,body{margin:0;height:100%;background:#f5f6f7;color:#131e29;font:16px Arial,Helvetica,sans-serif}
+  iframe{display:block;width:100%;height:100vh;height:100dvh;border:0}
+  #ayuda{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:#f5f6f7}
+  #ayuda[hidden]{display:none}
+  p{max-width:340px;margin:0;line-height:1.45}
+  a,button{min-width:220px;box-sizing:border-box;font:700 15px Arial,Helvetica,sans-serif;border:1px solid #0064d9;border-radius:8px;padding:12px;text-decoration:none;cursor:pointer}
+  button{background:#0064d9;color:#fff}
+  a{background:#fff;color:#0064d9}
+</style>
+</head>
+<body>
+<iframe id="app" title="Fumito Finance" src="https://script.google.com/macros/s/AKfycbzNvQtriUvBMgZKeWyKwyIl2DnuAc5M_bkfaZs3jT3ucMNSGv5z0CqqQXMeIXvVQXCT/exec"></iframe>
+<div id="ayuda" role="alert" hidden>
+  <p id="texto"></p>
+  <button id="reintentar" type="button">Reintentar</button>
+  <a id="chrome" href="https://script.google.com/macros/s/AKfycbzNvQtriUvBMgZKeWyKwyIl2DnuAc5M_bkfaZs3jT3ucMNSGv5z0CqqQXMeIXvVQXCT/exec" target="_blank" rel="noopener">Abrir en Chrome</a>
+  <p><small>Esta pantalla nunca pide tu contraseña.</small></p>
+</div>
+<script>
+(function () {
+  var ayuda = document.getElementById('ayuda'), texto = document.getElementById('texto');
+  var lista = false;
+  function avisar(mensaje) { texto.textContent = mensaje; ayuda.hidden = false; }
+  window.addEventListener('message', function (e) {
+    if (e.data !== 'fumito-lista' || !/\.googleusercontent\.com$/.test(e.origin)) return;
+    lista = true;
+    ayuda.hidden = true;
+  });
+  document.getElementById('reintentar').addEventListener('click', function () { location.reload(); });
+  window.addEventListener('offline', function () { avisar('Sin conexión a internet.'); });
+  window.addEventListener('online', function () { if (lista) ayuda.hidden = true; else location.reload(); });
+  if (!navigator.onLine) avisar('Sin conexión a internet.');
+  setTimeout(function () {
+    if (!lista) avisar('La app no cargó. Revisa tu conexión y que la sesión principal de Chrome sea la cuenta dueña de la hoja.');
+  }, 20000);
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+})();
+</script>
+</body>
+</html>
